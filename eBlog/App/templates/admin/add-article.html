@@ -131,32 +131,20 @@
             <div class="add-article-box">
               <h2 class="add-article-box-title"><span>栏目</span></h2>
                 <div class="add-article-box-content">
-{#                 {% for art in arts %}#}
                     <ul class="category-list">
-                      <li>
-                        <label>
-                          <input name="category" type="radio" value="2" checked>
-                           学无止境<em class="hidden-md">( 栏目ID: <span>2</span> )</em></label>
-                      </li>
-                     <li>
-                        <label>
-                          <input name="category" type="radio" value="3" checked>
-                           日记<em class="hidden-md">( 栏目ID: <span>3</span> )</em></label>
-                      </li>
-                     <li>
-                        <label>
-                          <input name="category" type="radio" value="4" checked>
-                           慢生活<em class="hidden-md">( 栏目ID: <span>4</span> )</em></label>
-                      </li>
-                     <li>
-                        <label>
-                          <input name="category" type="radio" value="5" checked>
-                           美文欣赏<em class="hidden-md">( 栏目ID: <span>5</span> )</em></label>
-                      </li>
+                        {% for category in categorys %}
+                          <li>
+                            <label>
+                              <input  type="radio" value="{{ category.id }}" checked name="category">
+                               {{ category.catename }}<em class="hidden-md"></em></label>
+                          </li>
+                        {% endfor %}
                     </ul>
-{#                    {% endfor %}#}
+
+
                 </div>
             </div>
+
             <div class="add-article-box">
               <h2 class="add-article-box-title"><span>标签</span></h2>
               <div class="add-article-box-content">

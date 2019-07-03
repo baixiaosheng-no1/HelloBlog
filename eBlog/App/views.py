@@ -6,17 +6,18 @@ from App.models import *
 
 blue = Blueprint('blog', __name__)
 
-#************************************
+
+
+#************后台************************
 #登录页面
 @blue.route('/admin/login/')
 def admin_login():
     return render_template("admin/login.html")
 
 
-#登录进入主页
+#后台主页
 @blue.route('/admin/index/',methods=['GET','POST'])
 def admin_index():
-    
     if request.method == 'POST':
         # 客户端数据传送
         uname = request.form.get('username')
@@ -73,13 +74,13 @@ def add_category():
             db.session.frush()
             return 'fail:%s' % e
     
-    return render_template('admin/category.html/')
+    return redirect(url_for('blog.rans_category'))
 
 
 # 更新栏目主页
 @blue.route('/admin/updatecategory/')
 def update_category():
-    categorys = Category.query.filter(Category.id)
+    categorys = Category.query.all()  #栏目查询集
     return render_template('admin/update-category.html/',categorys=categorys)
 
 
@@ -87,45 +88,52 @@ def update_category():
 @blue.route('/admin/updatewritecategory/<int:id>', methods=["GET", "POST"])
 def update_write_category(id):
     if request.method == 'POST':
+         # 指定要修改的栏目id
         category = Category.query.filter_by(id=id).first()
+        
         category.catename = request.form.get('name')
         category.as_name = request.form.get('alias')
         category.key_word = request.form.get('keywords')
         category.descri = request.form.get('describe')
     
         db.session.commit()
+        
+        
     categorys = Category.query.filter(Category.id)
     return render_template('admin/category.html',categorys=categorys)
 
 #删除栏目
 @blue.route('/admin/delcategory/<int:id>/')
 def del_category(id):
-    
+    #指定要删除的栏目
     category= Category.query.filter_by(id=id).first()
-    db.session.delete(category)
     
+    db.session.delete(category)
     db.session.commit()
+    
     return redirect(url_for('blog.rans_category'))
 
 #************************************
 #文章主页
 @blue.route('/admin/article/')
 def art():
-    arts = ArtMoel.query.filter(ArtMoel.id)
+    arts = ArtMoel.query.all()
     return render_template('admin/article.html/',arts=arts)
 
 
 #增加文章主页
 @blue.route('/admin/addarticle/')
 def add_art():
-    art = ArtMoel.query.filter(ArtMoel.id).first()
-    return render_template('admin/add-article.html/',art=art)
+    # arts = ArtMoel.query.all()
+    categorys = Category.query.all()
+    return render_template('admin/add-article.html/',categorys=categorys)
 
 
 # 撰写文章
 @blue.route('/admin/writearticle/', methods=["GET", "POST"])
 def write_art():
     if request.method == "POST":
+	    
         art = ArtMoel()
         art.title = request.form.get('title')
         art.content = request.form.get('content')
@@ -133,7 +141,9 @@ def write_art():
         art.describe = request.form.get('describe')
         art.tags = request.form.get('tags')
         art.date = datetime.now()
+        #邦定栏目
         art.category =request.form.get("category")
+        
         db.session.add(art)
         db.session.commit()
         
@@ -143,7 +153,9 @@ def write_art():
 #修改文章主页
 @blue.route('/admin/updatearticle/<int:id>/')
 def update_art(id):
+    #指定文章
     arts = ArtMoel.query.filter_by(id=id)
+    
     return render_template('admin/update-article.html/',arts=arts)
 
 
@@ -288,28 +300,6 @@ def g_book():
 def in_fo():
     arts = ArtMoel.query.all()
     return render_template('home/info.html',arts=arts)
-
-#查看日记
-@blue.route('/home/geti/')
-def get_i():
-    arts = Category.query.get(3).arts
-    return render_template('home/list.html',arts=arts)
-
-#学无止境
-@blue.route('/home/getn/')
-def get_n():
-    
-    return render_template('home/info.html')
-
-#慢生活
-@blue.route('/home/getf/')
-def get_f():
-    return render_template('home/info.html')
-
-#美文欣赏
-@blue.route('/home/geto/')
-def get_o():
-    return render_template('home/info.html')
 
 #图片详情
 @blue.route('/home/infopic/')
